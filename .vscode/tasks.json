@@ -34,8 +34,7 @@
 			"presentation": {
 				"reveal": "silent"
 			},
-            "group": "build",
-            "detail": "Make binary using Ninja Build System."
+            "group": "build"
         },
         {
             "label": "Firmware Build Solution",
