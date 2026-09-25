@@ -4,7 +4,7 @@ project(etvr_carrier_firmware)
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 
-# Toolchain.
+# Toolchain
 set(CMAKE_C_COMPILER arm-none-eabi-gcc)
 set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
 set(CMAKE_SIZE arm-none-eabi-size)
@@ -14,15 +14,17 @@ set(TINYUSB ${CMAKE_CURRENT_SOURCE_DIR}/tinyusb)
 set(MCU_SDK ${TINYUSB}/hw/mcu/microchip/samd11)
 
 # Linker Script
-#set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/samd11d14am_flash.ld)
+set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/samd11d14am_flash.ld)
 # Default Microchip Linker:
-set(LINKER_SCRIPT ${MCU_SDK}/gcc/gcc/samd11d14am_flash.ld)
+#set(LINKER_SCRIPT ${MCU_SDK}/gcc/gcc/samd11d14am_flash.ld)
 
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_EXECUTABLE_SUFFIX_C ".elf")
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-### Sources
+# Source Files
 
 set(TINYUSB_SRC_FILES
 	${TINYUSB}/src/tusb.c
@@ -33,9 +35,8 @@ set(TINYUSB_SRC_FILES
 )
 
 set(MCU_SDK_SRC_FILES
+	#${MCU_SDK}/gcc/gcc/startup_samd11.c
 	${MCU_SDK}/gcc/system_samd11.c
-	${MCU_SDK}/gcc/gcc/startup_samd11.c
-	${MCU_SDK}/hal/src/hal_atomic.c
 	${MCU_SDK}/hpl/gclk/hpl_gclk.c
 	${MCU_SDK}/hpl/pm/hpl_pm.c
 	${MCU_SDK}/hpl/sysctrl/hpl_sysctrl.c
@@ -49,12 +50,11 @@ file(GLOB_RECURSE PROJECT_SRC_FILES CONFIGURE_DEPENDS
 
 add_executable(${CMAKE_PROJECT_NAME}
 	${TINYUSB_SRC_FILES}
-	#${TINYUSB}/hw/bsp/samd11/family.c
 	${MCU_SDK_SRC_FILES}
     ${PROJECT_SRC_FILES}
 )
 
-# Headers
+# Header Files
 
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 	${TINYUSB}/src
@@ -73,12 +73,11 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Compiler
 
-# These can be added to TUSB_CONFIG
+# QFN Package: __SAMD11D14AM__
+# SOIC Package: __SAMD11D14AS__
+# WLCSP Package: __SAMD11D14AU__
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 	__SAMD11D14AM__
-	CFG_TUSB_MCU=OPT_MCU_SAMD11
-	CFG_TUSB_OS=OPT_OS_NONE
-	CFG_TUD_ENABLED=1
 )
 
 target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
@@ -106,10 +105,3 @@ add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
 	COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
 	COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
 )
-
-#cmake -B build -G Ninja
-#cd ./build/
-#ninja
-
-# TODO:
-# Add C version C17
