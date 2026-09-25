@@ -1,0 +1,22 @@
+{
+	"name": "EyeTrackVR Carrier Firmware",
+	"build": {
+		"dockerfile": "./Dockerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"settings": {
+                "C_Cpp.default.compilerPath": "/usr/bin/arm-none-eabi-gcc",
+                "files.trimTrailingWhitespace": true,
+                "files.eol": "\n",
+				"editor.insertSpaces": false,
+        		"editor.tabSize": 4
+            },
+			"extensions": [
+				"ms-vscode.cpptools",
+				"ms-vscode.cmake-tools"
+			]
+		}
+	},
+	"postCreateCommand": "git submodule update --init --recursive"
+}
