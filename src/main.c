@@ -28,6 +28,7 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "bsp/board_api.h"
 #include "tusb.h"
 
 static void cdc_task(void);
@@ -42,8 +43,6 @@ int main(void) {
     .speed = TUSB_SPEED_AUTO
   };
   tusb_init(BOARD_TUD_RHPORT, &dev_init);
-
-  board_init_after_tusb();
 
   while (1) {
     tud_task(); // tinyusb device task
@@ -99,35 +98,6 @@ static void cdc_task(void) {
 
         // echo back to both serial ports
         echo_serial_port(0, buf, count);
-        echo_serial_port(1, buf, count);
-      }
-
-      // Press on-board button to send Uart status notification
-      static uint32_t btn_prev = 0;
-      static cdc_notify_uart_state_t uart_state = { .value = 0 };
-      const uint32_t btn = board_button_read();
-      if (!btn_prev && btn) {
-        uart_state.dsr ^= 1;
-        tud_cdc_notify_uart_state(&uart_state);
-      }
-      btn_prev = btn;
-    }
-  }
-}
-
-// Invoked when cdc when line state changed e.g connected/disconnected
-// Use to reset to DFU when disconnect with 1200 bps
-void tud_cdc_line_state_cb(uint8_t instance, bool dtr, bool rts) {
-  (void)rts;
-
-  // DTR = false is counted as disconnected
-  if (!dtr) {
-    // touch1200 only with first CDC instance (Serial)
-    if (instance == 0) {
-      cdc_line_coding_t coding;
-      tud_cdc_get_line_coding(&coding);
-      if (coding.bit_rate == 1200) {
-        board_reset_to_bootloader();
       }
     }
   }
