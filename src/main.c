@@ -35,70 +35,70 @@ static void cdc_task(void);
 
 /*------------- MAIN -------------*/
 int main(void) {
-  board_init();
+	board_init();
 
-  // init device stack on configured roothub port
-  tusb_rhport_init_t dev_init = {
-    .role = TUSB_ROLE_DEVICE,
-    .speed = TUSB_SPEED_AUTO
-  };
-  tusb_init(BOARD_TUD_RHPORT, &dev_init);
+	// init device stack on configured roothub port
+	tusb_rhport_init_t dev_init = {
+		.role = TUSB_ROLE_DEVICE,
+		.speed = TUSB_SPEED_AUTO
+	};
+	tusb_init(BOARD_TUD_RHPORT, &dev_init);
 
-  while (1) {
-    tud_task(); // tinyusb device task
-    cdc_task();
-  }
+	while (1) {
+		tud_task(); // tinyusb device task
+		cdc_task();
+	}
 }
 
 // echo to either Serial0 or Serial1
 // with Serial0 as all lower case, Serial1 as all upper case
 static void echo_serial_port(uint8_t itf, uint8_t buf[], uint32_t count) {
-  uint8_t const case_diff = 'a' - 'A';
+	uint8_t const case_diff = 'a' - 'A';
 
-  for (uint32_t i = 0; i < count; i++) {
-    if (itf == 0) {
-      // echo back 1st port as lower case
-      if (isupper(buf[i])) {
-        buf[i] += case_diff;
-      }
-    } else {
-      // echo back 2nd port as upper case
-      if (islower(buf[i])) {
-        buf[i] -= case_diff;
-      }
-    }
+	for (uint32_t i = 0; i < count; i++) {
+		if (itf == 0) {
+			// echo back 1st port as lower case
+			if (isupper(buf[i])) {
+				buf[i] += case_diff;
+			}
+		} else {
+			// echo back 2nd port as upper case
+			if (islower(buf[i])) {
+				buf[i] -= case_diff;
+			}
+		}
 
-    tud_cdc_n_write_char(itf, buf[i]);
-  }
-  tud_cdc_n_write_flush(itf);
+		tud_cdc_n_write_char(itf, buf[i]);
+	}
+	tud_cdc_n_write_flush(itf);
 }
 
 // Invoked when device is mounted
 void tud_mount_cb(void) {
-  return;
+	return;
 }
 
 // Invoked when device is unmounted
 void tud_umount_cb(void) {
-  return;
+	return;
 }
 
 //--------------------------------------------------------------------+
 // USB CDC
 //--------------------------------------------------------------------+
 static void cdc_task(void) {
-  for (uint8_t itf = 0; itf < CFG_TUD_CDC; itf++) {
-    // connected() check for DTR bit
-    // Most but not all terminal client set this when making connection
-    // if ( tud_cdc_n_connected(itf) )
-    {
-      if (tud_cdc_n_available(itf)) {
-        uint8_t buf[64];
-        uint32_t count = tud_cdc_n_read(itf, buf, sizeof(buf));
+	for (uint8_t itf = 0; itf < CFG_TUD_CDC; itf++) {
+		// connected() check for DTR bit
+		// Most but not all terminal client set this when making connection
+		// if ( tud_cdc_n_connected(itf) )
+		{
+			if (tud_cdc_n_available(itf)) {
+				uint8_t buf[64];
+				uint32_t count = tud_cdc_n_read(itf, buf, sizeof(buf));
 
-        // echo back to both serial ports
-        echo_serial_port(0, buf, count);
-      }
-    }
-  }
+				// echo back to both serial ports
+				echo_serial_port(0, buf, count);
+			}
+		}
+	}
 }

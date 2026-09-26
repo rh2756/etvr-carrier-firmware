@@ -1,52 +1,52 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "type": "shell",
-            "label": "CMake Configure",
-            "command": "cmake",
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "CMake Configure",
+			"command": "cmake",
 			"args": [
 				"-S", "${workspaceFolder}",
 				"-B", "${workspaceFolder}/build",
 				"-G", "Ninja"
 			],
-            "group": "build",
-            "detail": "Generate project Makefiles with CMake."
-        },
-        {
-            "type": "shell",
-            "label": "Ninja Build",
-            "command": "ninja",
-            "args": [
+			"group": "build",
+			"detail": "Generate project Makefiles with CMake."
+		},
+		{
+			"type": "shell",
+			"label": "Ninja Build",
+			"command": "ninja",
+			"args": [
 				"-C", "${workspaceFolder}/build"
 			],
-            "group": "build",
-            "detail": "Make binary using Ninja Build System."
-        },
+			"group": "build",
+			"detail": "Make binary using Ninja Build System."
+		},
 		{
-            "type": "shell",
-            "label": "Clean Build Directory",
-            "command": "rm",
-            "args": [
+			"type": "shell",
+			"label": "Clean Build Directory",
+			"command": "rm",
+			"args": [
 				"-rf",
 				"${workspaceFolder}/build"
 			],
 			"presentation": {
 				"reveal": "silent"
 			},
-            "group": "build"
-        },
-        {
-            "label": "Firmware Build Solution",
-            "dependsOrder": "sequence",
-            "dependsOn": ["CMake Configure", "Ninja Build"],
 			"group": "build"
-        },
+		},
 		{
-            "label": "Firmware Clean Rebuild Solution",
-            "dependsOrder": "sequence",
-            "dependsOn": ["Clean Build Directory", "CMake Configure", "Ninja Build"],
+			"label": "Firmware Build Solution",
+			"dependsOrder": "sequence",
+			"dependsOn": ["CMake Configure", "Ninja Build"],
 			"group": "build"
-        }
-    ]
+		},
+		{
+			"label": "Firmware Clean Rebuild Solution",
+			"dependsOrder": "sequence",
+			"dependsOn": ["Clean Build Directory", "CMake Configure", "Ninja Build"],
+			"group": "build"
+		}
+	]
 }
