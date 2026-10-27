@@ -25,7 +25,7 @@
  */
 
 /* metadata:
-	 manufacturer: Microchip
+   manufacturer: Microchip
 */
 
 #include "sam.h"
@@ -58,7 +58,7 @@
 //--------------------------------------------------------------------+
 void USB_Handler(void)
 {
-	tud_int_handler(0);
+  tud_int_handler(0);
 }
 
 
@@ -74,83 +74,68 @@ void USB_Handler(void)
 
 void board_init(void)
 {
-	// Clock init ( follow hpl_init.c )
-	hri_nvmctrl_set_CTRLB_RWS_bf(NVMCTRL, 2);
+  // Clock init ( follow hpl_init.c )
+  hri_nvmctrl_set_CTRLB_RWS_bf(NVMCTRL, 2);
 
-	_pm_init();
-	_sysctrl_init_sources();
+  _pm_init();
+  _sysctrl_init_sources();
 #if _GCLK_INIT_1ST
-	_gclk_init_generators_by_fref(_GCLK_INIT_1ST);
+  _gclk_init_generators_by_fref(_GCLK_INIT_1ST);
 #endif
-	_sysctrl_init_referenced_generators();
-	_gclk_init_generators_by_fref(_GCLK_INIT_LAST);
+  _sysctrl_init_referenced_generators();
+  _gclk_init_generators_by_fref(_GCLK_INIT_LAST);
 
-	// 1ms tick timer (samd SystemCoreClock may not correct)
-	SystemCoreClock = CONF_CPU_FREQUENCY;
-	SysTick_Config(CONF_CPU_FREQUENCY / 1000);
+  // 1ms tick timer (samd SystemCoreClock may not correct)
+  SystemCoreClock = CONF_CPU_FREQUENCY;
+#if CFG_TUSB_OS == OPT_OS_NONE
+  SysTick_Config(CONF_CPU_FREQUENCY / 1000);
+#elif CFG_TUSB_OS == OPT_OS_FREERTOS
+  // Explicitly disable systick to prevent its ISR from running before scheduler start
+  SysTick->CTRL &= ~1U;
+#endif
 
-	/* USB Clock init
-	 * The USB module requires a GCLK_USB of 48 MHz ~ 0.25% clock
-	 * for low speed and full speed operation. */
-	_pm_enable_bus_clock(PM_BUS_APBB, USB);
-	_pm_enable_bus_clock(PM_BUS_AHB, USB);
-	_gclk_enable_channel(USB_GCLK_ID, GCLK_CLKCTRL_GEN_GCLK0_Val);
+  /* USB Clock init
+   * The USB module requires a GCLK_USB of 48 MHz ~ 0.25% clock
+   * for low speed and full speed operation. */
+  _pm_enable_bus_clock(PM_BUS_APBB, USB);
+  _pm_enable_bus_clock(PM_BUS_AHB, USB);
+  _gclk_enable_channel(USB_GCLK_ID, GCLK_CLKCTRL_GEN_GCLK0_Val);
 
-	// USB Pin Init
-	gpio_set_pin_direction(PIN_PA24, GPIO_DIRECTION_OUT);
-	gpio_set_pin_level(PIN_PA24, false);
-	gpio_set_pin_pull_mode(PIN_PA24, GPIO_PULL_OFF);
-	gpio_set_pin_direction(PIN_PA25, GPIO_DIRECTION_OUT);
-	gpio_set_pin_level(PIN_PA25, false);
-	gpio_set_pin_pull_mode(PIN_PA25, GPIO_PULL_OFF);
+  // USB Pin Init
+  gpio_set_pin_direction(PIN_PA24, GPIO_DIRECTION_OUT);
+  gpio_set_pin_level(PIN_PA24, false);
+  gpio_set_pin_pull_mode(PIN_PA24, GPIO_PULL_OFF);
+  gpio_set_pin_direction(PIN_PA25, GPIO_DIRECTION_OUT);
+  gpio_set_pin_level(PIN_PA25, false);
+  gpio_set_pin_pull_mode(PIN_PA25, GPIO_PULL_OFF);
 
-	gpio_set_pin_function(PIN_PA24, PINMUX_PA24G_USB_DM);
-	gpio_set_pin_function(PIN_PA25, PINMUX_PA25G_USB_DP);
+  gpio_set_pin_function(PIN_PA24, PINMUX_PA24G_USB_DM);
+  gpio_set_pin_function(PIN_PA25, PINMUX_PA25G_USB_DP);
 }
 
 //--------------------------------------------------------------------+
 // Board porting API
 //--------------------------------------------------------------------+
 
-size_t board_get_unique_id(uint8_t id[], size_t max_len) {
-	// SAMD11 128-bit serial number words (datasheet section "Serial Number")
-	static const uint32_t did_addr[4] = {0x0080A00C, 0x0080A040, 0x0080A044, 0x0080A048};
-
-	size_t len = 0;
-	for (int i = 0; i < 4 && len + 4 <= max_len; i++) {
-		uint32_t did = *((volatile uint32_t const*) did_addr[i]);
-		did = TU_BSWAP32(did); // same byte order as the samd21/samd51 BSPs
-		memcpy(id + len, &did, sizeof(did));
-		len += 4;
-	}
-
-	return len;
-}
-
-int board_uart_read(uint8_t* buf, int len)
-{
-	(void) buf; (void) len;
-	return -1;
-}
-
-int board_uart_write(void const * buf, int len)
-{
-	(void) buf; (void) len;
-	return -1;
-}
-
-#if CFG_TUSB_OS == OPT_OS_NONE
+#if CFG_TUSB_OS  == OPT_OS_NONE
 
 volatile uint32_t system_ticks = 0;
 
 void SysTick_Handler (void)
 {
-	system_ticks++;
+  system_ticks++;
 }
 
 uint32_t tusb_time_millis_api(void)
 {
-	return system_ticks;
+  return system_ticks;
+}
+
+void _init(void);
+void _init(void) {
+  // This _init() standin makes certain GCC environments happier.
+  // They expect the main binary to have a constructor called _init; but don't provide a weak default.
+  // Providing an empty constructor satisfies this odd case, and doesn't harm anything.
 }
 
 #endif
