@@ -32,18 +32,20 @@
 
 // Device Stack Options
 #define CFG_TUD_ENABLED 1
-#define CFG_TUD_MAX_SPEED OPT_MODE_FULL_SPEED // USB Full Speed (12 Mbps) should be enough for this application.
+#define CFG_TUD_MAX_SPEED OPT_MODE_FULL_SPEED
 #define CFG_TUD_ENDPOINT0_SIZE 64 // Size of the control transfers buffer.
 
 // USB Class Options
 #define CFG_TUD_CDC 1
-#define CFG_TUD_CDC_NOTIFY 1 // Enable use of notification endpoint
+#define CFG_TUD_MSC 0
+#define CFG_TUD_HID 0
+#define CFG_TUD_MIDI 0
+#define CFG_TUD_VENDOR 0
 
 // CDC FIFO size of TX and RX
-#define CFG_TUD_CDC_RX_BUFSIZE (TUD_OPT_HIGH_SPEED ? 512 : 64)
-#define CFG_TUD_CDC_TX_BUFSIZE (TUD_OPT_HIGH_SPEED ? 512 : 64)
+#define CFG_TUD_CDC_RX_BUFSIZE 64
+#define CFG_TUD_CDC_TX_BUFSIZE 64
 
-// CDC Endpoint transfer buffer size, default to max bulk packet size (HS 512, FS 64). Larger is faster.
-// Larger RX_EPSIZE requires CFG_TUD_CDC_RX_NEED_ZLP = 1 and host ZLP support
-#define CFG_TUD_CDC_RX_EPSIZE (TUD_OPT_HIGH_SPEED ? 512 : 64)
-#define CFG_TUD_CDC_TX_EPSIZE (TUD_OPT_HIGH_SPEED ? 512 : 64)
+// CDC Endpoint buffer size. Should be max bulk packet size for the USB speed.
+#define CFG_TUD_CDC_RX_EPSIZE 64
+#define CFG_TUD_CDC_TX_EPSIZE 64
