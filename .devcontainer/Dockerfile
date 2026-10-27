@@ -9,6 +9,9 @@ RUN apt-get update && \
         make \
         gcc-arm-none-eabi \
         libnewlib-arm-none-eabi \
+        cppcheck \
+        clang-format \
+        clang-tidy \
         python3 \
         ca-certificates \
     && apt-get clean \
