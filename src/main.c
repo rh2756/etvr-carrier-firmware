@@ -27,17 +27,16 @@
 #include "tusb.h"
 
 /*------------- MAIN -------------*/
-int main(void) {
-  board_init();
+int main(void)
+{
+	board_init();
 
-  // init device stack on configured roothub port
-  tusb_rhport_init_t dev_init = {
-    .role = TUSB_ROLE_DEVICE,
-    .speed = TUSB_SPEED_FULL
-  };
-  tusb_init(BOARD_TUD_RHPORT, &dev_init);
+	// init device stack on configured roothub port
+	tusb_rhport_init_t dev_init = {.role = TUSB_ROLE_DEVICE, .speed = TUSB_SPEED_FULL};
+	tusb_init(BOARD_TUD_RHPORT, &dev_init);
 
-  while (1) {
-    tud_task(); // tinyusb device task
-  }
+	while (1)
+	{
+		tud_task(); // tinyusb device task
+	}
 }

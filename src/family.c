@@ -43,8 +43,8 @@
 #include "hri/hri_nvmctrl_d11.h"
 
 #include "hpl/gclk/hpl_gclk_base.h"
-#include "hpl_pm_config.h"
 #include "hpl/pm/hpl_pm_base.h"
+#include "hpl_pm_config.h"
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -52,15 +52,13 @@
 
 #include "bsp/board_api.h"
 
-
 //--------------------------------------------------------------------+
 // Forward USB interrupt events to TinyUSB IRQ Handler
 //--------------------------------------------------------------------+
 void USB_Handler(void)
 {
-  tud_int_handler(0);
+	tud_int_handler(0);
 }
-
 
 //--------------------------------------------------------------------+
 // MACRO TYPEDEF CONSTANT ENUM DECLARATION
@@ -74,68 +72,69 @@ void USB_Handler(void)
 
 void board_init(void)
 {
-  // Clock init ( follow hpl_init.c )
-  hri_nvmctrl_set_CTRLB_RWS_bf(NVMCTRL, 2);
+	// Clock init ( follow hpl_init.c )
+	hri_nvmctrl_set_CTRLB_RWS_bf(NVMCTRL, 2);
 
-  _pm_init();
-  _sysctrl_init_sources();
+	_pm_init();
+	_sysctrl_init_sources();
 #if _GCLK_INIT_1ST
-  _gclk_init_generators_by_fref(_GCLK_INIT_1ST);
+	_gclk_init_generators_by_fref(_GCLK_INIT_1ST);
 #endif
-  _sysctrl_init_referenced_generators();
-  _gclk_init_generators_by_fref(_GCLK_INIT_LAST);
+	_sysctrl_init_referenced_generators();
+	_gclk_init_generators_by_fref(_GCLK_INIT_LAST);
 
-  // 1ms tick timer (samd SystemCoreClock may not correct)
-  SystemCoreClock = CONF_CPU_FREQUENCY;
+	// 1ms tick timer (samd SystemCoreClock may not correct)
+	SystemCoreClock = CONF_CPU_FREQUENCY;
 #if CFG_TUSB_OS == OPT_OS_NONE
-  SysTick_Config(CONF_CPU_FREQUENCY / 1000);
+	SysTick_Config(CONF_CPU_FREQUENCY / 1000);
 #elif CFG_TUSB_OS == OPT_OS_FREERTOS
-  // Explicitly disable systick to prevent its ISR from running before scheduler start
-  SysTick->CTRL &= ~1U;
+	// Explicitly disable systick to prevent its ISR from running before scheduler start
+	SysTick->CTRL &= ~1U;
 #endif
 
-  /* USB Clock init
-   * The USB module requires a GCLK_USB of 48 MHz ~ 0.25% clock
-   * for low speed and full speed operation. */
-  _pm_enable_bus_clock(PM_BUS_APBB, USB);
-  _pm_enable_bus_clock(PM_BUS_AHB, USB);
-  _gclk_enable_channel(USB_GCLK_ID, GCLK_CLKCTRL_GEN_GCLK0_Val);
+	/* USB Clock init
+	 * The USB module requires a GCLK_USB of 48 MHz ~ 0.25% clock
+	 * for low speed and full speed operation. */
+	_pm_enable_bus_clock(PM_BUS_APBB, USB);
+	_pm_enable_bus_clock(PM_BUS_AHB, USB);
+	_gclk_enable_channel(USB_GCLK_ID, GCLK_CLKCTRL_GEN_GCLK0_Val);
 
-  // USB Pin Init
-  gpio_set_pin_direction(PIN_PA24, GPIO_DIRECTION_OUT);
-  gpio_set_pin_level(PIN_PA24, false);
-  gpio_set_pin_pull_mode(PIN_PA24, GPIO_PULL_OFF);
-  gpio_set_pin_direction(PIN_PA25, GPIO_DIRECTION_OUT);
-  gpio_set_pin_level(PIN_PA25, false);
-  gpio_set_pin_pull_mode(PIN_PA25, GPIO_PULL_OFF);
+	// USB Pin Init
+	gpio_set_pin_direction(PIN_PA24, GPIO_DIRECTION_OUT);
+	gpio_set_pin_level(PIN_PA24, false);
+	gpio_set_pin_pull_mode(PIN_PA24, GPIO_PULL_OFF);
+	gpio_set_pin_direction(PIN_PA25, GPIO_DIRECTION_OUT);
+	gpio_set_pin_level(PIN_PA25, false);
+	gpio_set_pin_pull_mode(PIN_PA25, GPIO_PULL_OFF);
 
-  gpio_set_pin_function(PIN_PA24, PINMUX_PA24G_USB_DM);
-  gpio_set_pin_function(PIN_PA25, PINMUX_PA25G_USB_DP);
+	gpio_set_pin_function(PIN_PA24, PINMUX_PA24G_USB_DM);
+	gpio_set_pin_function(PIN_PA25, PINMUX_PA25G_USB_DP);
 }
 
 //--------------------------------------------------------------------+
 // Board porting API
 //--------------------------------------------------------------------+
 
-#if CFG_TUSB_OS  == OPT_OS_NONE
+#if CFG_TUSB_OS == OPT_OS_NONE
 
 volatile uint32_t system_ticks = 0;
 
-void SysTick_Handler (void)
+void SysTick_Handler(void)
 {
-  system_ticks++;
+	system_ticks++;
 }
 
 uint32_t tusb_time_millis_api(void)
 {
-  return system_ticks;
+	return system_ticks;
 }
 
 void _init(void);
-void _init(void) {
-  // This _init() standin makes certain GCC environments happier.
-  // They expect the main binary to have a constructor called _init; but don't provide a weak default.
-  // Providing an empty constructor satisfies this odd case, and doesn't harm anything.
+void _init(void)
+{
+	// This _init() standin makes certain GCC environments happier.
+	// They expect the main binary to have a constructor called _init; but don't provide a weak default.
+	// Providing an empty constructor satisfies this odd case, and doesn't harm anything.
 }
 
 #endif
