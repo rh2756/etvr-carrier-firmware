@@ -11,7 +11,6 @@ RUN apt-get update && \
         libnewlib-arm-none-eabi \
         cppcheck \
         clang-format \
-        clang-tidy \
         python3 \
         ca-certificates \
     && apt-get clean \
