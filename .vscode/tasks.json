@@ -6,22 +6,25 @@
 			"label": "CMake Configure",
 			"command": "cmake",
 			"args": [
-				"-S", "${workspaceFolder}",
-				"-B", "${workspaceFolder}/build",
-				"-G", "Ninja"
+				"-S",
+				"${workspaceFolder}",
+				"-B",
+				"${workspaceFolder}/build",
+				"-G",
+				"Ninja"
 			],
-			"group": "build",
-			"detail": "Generate project Makefiles with CMake."
+			"hide": true
 		},
 		{
 			"type": "shell",
 			"label": "Ninja Build",
 			"command": "ninja",
 			"args": [
-				"-C", "${workspaceFolder}/build"
+				"-C",
+				"${workspaceFolder}/build"
 			],
-			"group": "build",
-			"detail": "Make binary using Ninja Build System."
+			"problemMatcher": "$gcc",
+			"hide": true
 		},
 		{
 			"type": "shell",
@@ -34,19 +37,43 @@
 			"presentation": {
 				"reveal": "silent"
 			},
-			"group": "build"
+			"hide": true
+		},
+		{
+			"type": "shell",
+			"label": "Check Formatting",
+			"command": "clang-format",
+			"args": [
+				"-n",
+				"--style=file",
+				"${workspaceFolder}/src/*.c"
+			],
+			"group": "test"
+		},
+		{
+			"type": "shell",
+			"label": "Static Analysis",
+			"command": "scripts/cppcheck.sh",
+			"group": "test"
 		},
 		{
 			"label": "Firmware Build Solution",
 			"dependsOrder": "sequence",
-			"dependsOn": ["CMake Configure", "Ninja Build"],
+			"dependsOn": [
+				"Clean Build Directory",
+				"CMake Configure",
+				"Ninja Build"
+			],
 			"group": "build"
 		},
 		{
-			"label": "Firmware Clean Rebuild Solution",
+			"label": "Firmware Test Solution",
 			"dependsOrder": "sequence",
-			"dependsOn": ["Clean Build Directory", "CMake Configure", "Ninja Build"],
-			"group": "build"
+			"dependsOn": [
+				"Check Formatting",
+				"Static Analysis"
+			],
+			"group": "test"
 		}
 	]
 }
