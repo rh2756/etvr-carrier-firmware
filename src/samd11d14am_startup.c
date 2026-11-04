@@ -117,6 +117,7 @@ void reset_handler(void)
 		;
 }
 
+// cppcheck-suppress unusedFunction ; Weak alias default handler.
 void dummy_handler(void)
 {
 	while (1)
