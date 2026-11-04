@@ -24,6 +24,5 @@
 			]
 		}
 	},
-	"postCreateCommand": "",
-	"postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && git submodule update --init --recursive "
+	"postStartCommand": "scripts/devcontainer-post-start.sh"
 }
