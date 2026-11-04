@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 arguments=(
 	"--project=build/compile_commands.json"

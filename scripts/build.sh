@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 rm -rf ./build
 cmake -S . -B ./build -G Ninja
 ninja -C ./build
