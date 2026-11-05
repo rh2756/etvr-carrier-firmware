@@ -18,12 +18,10 @@ jobs:
         id: submodules-hashes
         run: echo "tinyusb=$(git rev-parse HEAD:tinyusb)" >> $GITHUB_OUTPUT
 
-      - name: Cache submodules
-        uses: actions/cache@v4
+      - name: Cache TinyUSB submodule
+        uses: actions/cache@v5
         with:
-          path: |
-            tinyusb
-            .git/modules/tinyusb
+          path: tinyusb
           key: module-tinyusb-${{ steps.submodules-hashes.outputs.tinyusb }}
 
       - name: Login to GitHub Container Registry
