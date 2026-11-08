@@ -23,6 +23,14 @@
  *
  */
 
+#ifndef TUSB_CONFIG_H_
+#define TUSB_CONFIG_H_
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #define CFG_TUSB_DEBUG 0
 
 // MCU Options
@@ -49,3 +57,9 @@
 // CDC Endpoint buffer size. Should be max bulk packet size for the USB speed.
 #define CFG_TUD_CDC_RX_EPSIZE 64
 #define CFG_TUD_CDC_TX_EPSIZE 64
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* TUSB_CONFIG_H_ */
