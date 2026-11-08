@@ -24,6 +24,7 @@
  */
 
 #include "bsp/board_api.h"
+#include "protocol/protocol.h"
 #include "tusb.h"
 
 /*------------- MAIN -------------*/
