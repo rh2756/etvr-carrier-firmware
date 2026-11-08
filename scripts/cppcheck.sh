@@ -8,8 +8,8 @@ arguments=(
 	"--error-exitcode=1"
 	"--inline-suppr"
 	"--suppressions-list=cppcheck-suppressions.txt"
-	"-D__GNUC__"
 	"--file-filter=src/**"
+	"-D__GNUC__"
 )
 
 if [[ "$1" == "--export-arguments" ]]; then

@@ -1,5 +1,5 @@
 // Suppress 3rd party libraries.
-*:./tinyusb/*
+*:*tinyusb/*
 
 unmatchedSuppression:*
 
