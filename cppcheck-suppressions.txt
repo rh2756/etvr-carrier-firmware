@@ -1,0 +1,11 @@
+// Suppress 3rd party libraries.
+*:*tinyusb/*
+
+unmatchedSuppression:*
+
+// Suppress warnings about not being able to find system headers.
+// Compiler will pick up missing headers before static analysis.
+missingIncludeSystem
+
+// Suppress error from microchip assert function (false positive).
+internalAstError:*tinyusb/hw/mcu/microchip/samd11/hal/utils/include/utils_assert.h

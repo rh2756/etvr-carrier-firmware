@@ -1,0 +1,4 @@
+build/
+
+# Ignore local vscode settings.
+.vscode/settings.json

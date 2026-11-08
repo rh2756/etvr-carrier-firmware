@@ -1,0 +1,3 @@
+{
+	"arguments": "@(bash scripts/cppcheck.sh --export-arguments)"
+}

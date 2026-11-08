@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Firmware Build",
+			"command": "scripts/build.sh",
+			"problemMatcher": "$gcc",
+			"group": "build"
+		},
+		{
+			"type": "shell",
+			"label": "Linting",
+			"command": "scripts/linting.sh",
+			"group": "test"
+		},
+		{
+			"type": "shell",
+			"label": "Static Analysis",
+			"command": "scripts/cppcheck.sh",
+			"group": "test"
+		}
+	]
+}
